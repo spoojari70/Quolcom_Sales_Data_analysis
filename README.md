@@ -19,16 +19,6 @@ This project is built entirely using the **R** programming language. The followi
 * **`ggmosaic`**: For visualizing customer segment proportions (mosaic plots).
 * **`lubridate`**: For date manipulation (e.g., converting integer dates).
 
----
-
-## 📂 Repository Structure
-The project structure should ideally look like this:
-Quantium_Retail_Analytics/ ├── code.R # Main analysis script (contains both Task 1 & 2 code) ├── README.md # This file └── Data/ ├── QVI_transaction_data.xlsx # Transaction data (Excel format) └── QVI_purchase_behaviour.csv # Customer data (CSV format)
-
-**Note:** Ensure your data files are placed within a folder named `Data/` in the same directory as your main script.
-
----
-
 ## 🚀 Getting Started
 
 ### Prerequisites
