@@ -1,0 +1,211 @@
+---
+title: "Quantium Task 2 Analysis"
+author: "sairaj"
+date: "2025-11-10"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+filePath <- "C:/Users/Acer/Quolcom/QVI_data.csv"
+```
+
+```{r}
+library(data.table)
+library(tidyr)
+library(ggplot2)
+```
+
+```{r}
+# 1. Set filePath to the DIRECTORY (folder) where the file is.
+filePath <- "C:/Users/Acer/Quolcom/" 
+
+# 2. Use paste0() to join the directory and the file NAME.
+data <- fread(paste0(filePath, "QVI_data.csv"))
+```
+
+```{r}
+#### Set themes for plots
+theme_set(theme_bw()) # Sets the base theme to black and white
+theme_update(plot.title = element_text(hjust = 0.5)) # Centers the title
+```
+
+```{r}
+# Convert the character date column to a Date object using the correct format
+data[, DATE := as.Date(DATE, format = "%d-%m-%Y")]
+```
+
+```{r}
+# Create the YEARMONTH column
+data[, YEARMONTH := as.numeric(format(DATE, "%Y%m"))]
+```
+
+```{r}
+#### Next, we define the measure calculations to use during the analysis.
+# Over to you! For each store and month calculate total sales, number of customers,
+# transactions per customer, chips per customer and the average price per unit.
+## Hint: you can use uniqueN() to count distinct values in a column
+
+measureOverTime <- data[, .(totSales = sum(TOT_SALES),
+                            nCustomers = uniqueN(LYLTY_CARD_NBR),
+                            nTxnPerCust = uniqueN(TXN_ID) / uniqueN(LYLTY_CARD_NBR),
+                            nChipsPerTxn = sum(PROD_QTY) / uniqueN(TXN_ID), # Assuming "Chips" refers to "Packets"
+                            avgPricePerUnit = sum(TOT_SALES) / sum(PROD_QTY))
+                        , by = .(STORE_NBR, YEARMONTH)][order(STORE_NBR, YEARMONTH)]
+```
+
+```{r}
+#### Over to you! Create a function to calculate correlation for a measure, looping
+#### through each control store.
+calculateCorrelation <- function(inputTable, trial_store, measure) {
+  # Get the data for the trial store
+  trial_store_data <- inputTable[STORE_NBR == trial_store, get(measure)]
+  
+  # Get a list of all potential control store numbers (excluding the trial store itself)
+  control_stores <- unique(inputTable[STORE_NBR != trial_store, STORE_NBR])
+  
+  # Initialise an empty data.table to store results
+  correlation_table <- data.table(Control_Store = control_stores, Correlation = NA_real_)
+  
+  # Loop through each control store
+  for (i in 1:length(control_stores)) {
+    control_store_nbr <- control_stores[i]
+    
+    # Get the data for the current control store
+    control_store_data <- inputTable[STORE_NBR == control_store_nbr, get(measure)]
+    
+    # Calculate correlation (using the cor() function)
+    correlation_table[i, Correlation := cor(trial_store_data, control_store_data)]
+  }
+  
+  return(correlation_table)
+}
+```
+
+```{r}
+#### Let's define inputTable as a metric table with potential comparison stores,
+#### metricCol as the store metric used to calculate correlation on, and storeComparison
+#### as the store number of the trial store.
+calculateCorrelation <- function(inputTable, metricCol, storeComparison) {
+  calcCorrTable = data.table(Store1 = numeric(), Store2 = numeric(), corr_measure = numeric())
+  
+  # 1.1 Identify all unique store numbers in the input table
+  storeNumbers <- unique(inputTable[, STORE_NBR]) 
+
+  for (i in storeNumbers) {
+    # Check if the current store 'i' is the trial store. 
+    # If so, the correlation is 1 (perfect), and we still want to include it.
+    
+    # 1.2 Calculate the correlation between the trial store (storeComparison) 
+    # and the current store (i) for the specified metric (metricCol).
+    calculatedMeasure = data.table("Store1" = storeComparison,
+                                   "Store2" = i,
+                                   "corr_measure" = cor(inputTable[STORE_NBR == storeComparison, get(metricCol)],
+                                                        inputTable[STORE_NBR == i, get(metricCol)]))
+
+    # 1.3 Bind the calculated row to the main correlation table
+    calcCorrTable <- rbind(calcCorrTable, calculatedMeasure)
+  }
+  return(calcCorrTable)
+}
+```
+
+```{r}
+#### Over to you! Use the function you created to calculate correlations against
+#### store 77 using total sales and number of customers.
+#### Hint: Refer back to the input names of the functions we created.
+#### Create a function to calculate a standardised magnitude distance for a
+#### measure, looping through each control store
+calculateMagnitudeDistance <- function(inputTable, metricCol, storeComparison) {
+# ... [Function code is here] ...
+}
+magnitude_nSales <- calculateMagnitudeDistance(preTrialMeasures, quote(totSales),
+trial_store)
+magnitude_nCustomers <- calculateMagnitudeDistance(preTrialMeasures,
+quote(nCustomers), trial_store)
+```
+
+```{r}
+#### Over to you! Use the function you created to calculate correlations against
+#### store 77 using total sales and number of customers.
+#### Hint: Refer back to the input names of the functions we created.
+trial_store <- 77 # **Set the trial store number**
+
+# Calculate Correlation for Total Sales
+corr_nSales <- calculateCorrelation(preTrialMeasures, quote(totSales), trial_store)
+# Calculate Correlation for Number of Customers
+corr_nCustomers <- calculateCorrelation(preTrialMeasures, quote(nCustomers), trial_store)
+
+#### Then, use the functions for calculating magnitude.
+magnitude_nSales <- calculateMagnitudeDistance(preTrialMeasures, quote(totSales),
+trial_store)
+magnitude_nCustomers <- calculateMagnitudeDistance(preTrialMeasures,
+quote(nCustomers), trial_store)
+```
+
+```{r}
+storesWithFullObs <- unique(measureOverTime[, .N, STORE_NBR][N == 12, STORE_NBR])
+preTrialMeasures <- measureOverTime[YEARMONTH < 201902 & STORE_NBR %in%
+storesWithFullObs, ]
+
+```
+
+```{r}
+trial_store <- 77
+corr_nSales <- calculateCorrelation(preTrialMeasures, quote(totSales), trial_store)
+corr_nCustomers <- calculateCorrelation(preTrialMeasures, quote(nCustomers), trial_store) 
+# ... and the rest of the score calculations
+
+```
+
+```{r}
+#### Over to you! Create a combined score composed of correlation and magnitude, by
+#### first merging the correlations table with the magnitude table.
+corr_weight <- 0.5
+
+# **1. Combine Sales Correlation and Magnitude Scores**
+score_nSales <- merge(corr_nSales, magnitude_nSales, by = c("Store1", "Store2"))[, 
+                                                        scoreNSales := corr_measure * corr_weight + mag_measure * (1 - corr_weight)]
+
+# **2. Combine Customer Correlation and Magnitude Scores**
+score_nCustomers <- merge(corr_nCustomers, magnitude_nCustomers, by = c("Store1", "Store2"))[, 
+                                                            scoreNCust := corr_measure * corr_weight + mag_measure * (1 - corr_weight)]
+```
+
+```{r}
+# Re-run the magnitude distance calculations
+magnitude_nSales <- calculateMagnitudeDistance(preTrialMeasures, quote(totSales), trial_store)
+magnitude_nCustomers <- calculateMagnitudeDistance(preTrialMeasures, quote(nCustomers), trial_store)
+```
+
+```{r}
+calculatedMeasure = data.table("Store1" = storeComparison
+ , "Store2" = i
+ , "YEARMONTH" = inputTable[STORE_NBR == storeComparison, YEARMONTH]
+ , "measure" = abs(inputTable[STORE_NBR == storeComparison, eval(metricCol)]
+ - inputTable[STORE_NBR == i, eval(metricCol)])
+ )
+```
