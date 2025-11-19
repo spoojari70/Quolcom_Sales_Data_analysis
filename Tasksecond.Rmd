@@ -136,137 +136,175 @@ score_nCustomers <- merge(corr_nCustomers, magnitude_nCustomers, by = c("Store1"
 score_Control <- merge(score_nSales, score_nCustomers, by = c("Store1", "Store2"))
 score_Control[, finalControlScore := scoreNSales * 0.5 + scoreNCust * 0.5]
 ```
-
 #### Scale pre-trial control customers to match pre-trial trial store customers
 
 # 1. Calculate the scaling factor for customers
-
-scalingFactorForControlCustomers \<- preTrialMeasures[STORE_NBR == trial_store & YEARMONTH \< 201902, sum(nCustomers)] / preTrialMeasures[STORE_NBR == control_store & YEARMONTH \< 201902, sum(nCustomers)]
+scalingFactorForControlCustomers <- preTrialMeasures[STORE_NBR == trial_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)] / 
+                                    preTrialMeasures[STORE_NBR == control_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)]
 
 # 2. Apply the scaling factor and create the 'scaledControlCustomers' object
-
-measureOverTimeCusts \<- measureOverTime \# Use the full measureOverTime table scaledControlCustomers \<- measureOverTimeCusts[STORE_NBR == control_store, .(STORE_NBR, YEARMONTH, controlCustomers = nCustomers \* scalingFactorForControlCustomers)]
+measureOverTimeCusts <- measureOverTime # Use the full measureOverTime table
+scaledControlCustomers <- measureOverTimeCusts[STORE_NBR == control_store, 
+                                               .(STORE_NBR, YEARMONTH, 
+                                                 controlCustomers = nCustomers * scalingFactorForControlCustomers)]
 
 # Rename nCustomers to controlCustomers in the object for consistency in the merge
-
 # NOTE: The line above already does the renaming, so we are good to go.
 
 # 3. Calculate percentage difference (your existing code, slightly corrected for the new column name 'controlCustomers')
-
-percentageDiff \<- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")], by = "YEARMONTH" )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]\#### Scale pre-trial control customers to match pre-trial trial store customers
+percentageDiff <- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], 
+                        measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")],
+                        by = "YEARMONTH"
+                        )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]#### Scale pre-trial control customers to match pre-trial trial store customers
 
 # 1. Calculate the scaling factor for customers
-
-scalingFactorForControlCustomers \<- preTrialMeasures[STORE_NBR == trial_store & YEARMONTH \< 201902, sum(nCustomers)] / preTrialMeasures[STORE_NBR == control_store & YEARMONTH \< 201902, sum(nCustomers)]
+scalingFactorForControlCustomers <- preTrialMeasures[STORE_NBR == trial_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)] / 
+                                    preTrialMeasures[STORE_NBR == control_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)]
 
 # 2. Apply the scaling factor and create the 'scaledControlCustomers' object
-
-measureOverTimeCusts \<- measureOverTime \# Use the full measureOverTime table scaledControlCustomers \<- measureOverTimeCusts[STORE_NBR == control_store, .(STORE_NBR, YEARMONTH, controlCustomers = nCustomers \* scalingFactorForControlCustomers)]
+measureOverTimeCusts <- measureOverTime # Use the full measureOverTime table
+scaledControlCustomers <- measureOverTimeCusts[STORE_NBR == control_store, 
+                                               .(STORE_NBR, YEARMONTH, 
+                                                 controlCustomers = nCustomers * scalingFactorForControlCustomers)]
 
 # Rename nCustomers to controlCustomers in the object for consistency in the merge
-
 # NOTE: The line above already does the renaming, so we are good to go.
 
 # 3. Calculate percentage difference (your existing code, slightly corrected for the new column name 'controlCustomers')
-
-percentageDiff \<- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")], by = "YEARMONTH" )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]\#### Scale pre-trial control customers to match pre-trial trial store customers
+percentageDiff <- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], 
+                        measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")],
+                        by = "YEARMONTH"
+                        )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]#### Scale pre-trial control customers to match pre-trial trial store customers
 
 # 1. Calculate the scaling factor for customers
-
-scalingFactorForControlCustomers \<- preTrialMeasures[STORE_NBR == trial_store & YEARMONTH \< 201902, sum(nCustomers)] / preTrialMeasures[STORE_NBR == control_store & YEARMONTH \< 201902, sum(nCustomers)]
+scalingFactorForControlCustomers <- preTrialMeasures[STORE_NBR == trial_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)] / 
+                                    preTrialMeasures[STORE_NBR == control_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)]
 
 # 2. Apply the scaling factor and create the 'scaledControlCustomers' object
-
-measureOverTimeCusts \<- measureOverTime \# Use the full measureOverTime table scaledControlCustomers \<- measureOverTimeCusts[STORE_NBR == control_store, .(STORE_NBR, YEARMONTH, controlCustomers = nCustomers \* scalingFactorForControlCustomers)]
+measureOverTimeCusts <- measureOverTime # Use the full measureOverTime table
+scaledControlCustomers <- measureOverTimeCusts[STORE_NBR == control_store, 
+                                               .(STORE_NBR, YEARMONTH, 
+                                                 controlCustomers = nCustomers * scalingFactorForControlCustomers)]
 
 # Rename nCustomers to controlCustomers in the object for consistency in the merge
-
 # NOTE: The line above already does the renaming, so we are good to go.
 
 # 3. Calculate percentage difference (your existing code, slightly corrected for the new column name 'controlCustomers')
-
-percentageDiff \<- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")], by = "YEARMONTH" )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]\#### Scale pre-trial control customers to match pre-trial trial store customers
+percentageDiff <- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], 
+                        measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")],
+                        by = "YEARMONTH"
+                        )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]#### Scale pre-trial control customers to match pre-trial trial store customers
 
 # 1. Calculate the scaling factor for customers
-
-scalingFactorForControlCustomers \<- preTrialMeasures[STORE_NBR == trial_store & YEARMONTH \< 201902, sum(nCustomers)] / preTrialMeasures[STORE_NBR == control_store & YEARMONTH \< 201902, sum(nCustomers)]
+scalingFactorForControlCustomers <- preTrialMeasures[STORE_NBR == trial_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)] / 
+                                    preTrialMeasures[STORE_NBR == control_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)]
 
 # 2. Apply the scaling factor and create the 'scaledControlCustomers' object
-
-measureOverTimeCusts \<- measureOverTime \# Use the full measureOverTime table scaledControlCustomers \<- measureOverTimeCusts[STORE_NBR == control_store, .(STORE_NBR, YEARMONTH, controlCustomers = nCustomers \* scalingFactorForControlCustomers)]
+measureOverTimeCusts <- measureOverTime # Use the full measureOverTime table
+scaledControlCustomers <- measureOverTimeCusts[STORE_NBR == control_store, 
+                                               .(STORE_NBR, YEARMONTH, 
+                                                 controlCustomers = nCustomers * scalingFactorForControlCustomers)]
 
 # Rename nCustomers to controlCustomers in the object for consistency in the merge
-
 # NOTE: The line above already does the renaming, so we are good to go.
 
 # 3. Calculate percentage difference (your existing code, slightly corrected for the new column name 'controlCustomers')
-
-percentageDiff \<- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")], by = "YEARMONTH" )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]\#### Scale pre-trial control customers to match pre-trial trial store customers
+percentageDiff <- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], 
+                        measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")],
+                        by = "YEARMONTH"
+                        )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]#### Scale pre-trial control customers to match pre-trial trial store customers
 
 # 1. Calculate the scaling factor for customers
-
-scalingFactorForControlCustomers \<- preTrialMeasures[STORE_NBR == trial_store & YEARMONTH \< 201902, sum(nCustomers)] / preTrialMeasures[STORE_NBR == control_store & YEARMONTH \< 201902, sum(nCustomers)]
+scalingFactorForControlCustomers <- preTrialMeasures[STORE_NBR == trial_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)] / 
+                                    preTrialMeasures[STORE_NBR == control_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)]
 
 # 2. Apply the scaling factor and create the 'scaledControlCustomers' object
-
-measureOverTimeCusts \<- measureOverTime \# Use the full measureOverTime table scaledControlCustomers \<- measureOverTimeCusts[STORE_NBR == control_store, .(STORE_NBR, YEARMONTH, controlCustomers = nCustomers \* scalingFactorForControlCustomers)]
+measureOverTimeCusts <- measureOverTime # Use the full measureOverTime table
+scaledControlCustomers <- measureOverTimeCusts[STORE_NBR == control_store, 
+                                               .(STORE_NBR, YEARMONTH, 
+                                                 controlCustomers = nCustomers * scalingFactorForControlCustomers)]
 
 # Rename nCustomers to controlCustomers in the object for consistency in the merge
-
 # NOTE: The line above already does the renaming, so we are good to go.
 
 # 3. Calculate percentage difference (your existing code, slightly corrected for the new column name 'controlCustomers')
-
-percentageDiff \<- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")], by = "YEARMONTH" )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]\#### Scale pre-trial control customers to match pre-trial trial store customers
+percentageDiff <- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], 
+                        measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")],
+                        by = "YEARMONTH"
+                        )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]#### Scale pre-trial control customers to match pre-trial trial store customers
 
 # 1. Calculate the scaling factor for customers
-
-scalingFactorForControlCustomers \<- preTrialMeasures[STORE_NBR == trial_store & YEARMONTH \< 201902, sum(nCustomers)] / preTrialMeasures[STORE_NBR == control_store & YEARMONTH \< 201902, sum(nCustomers)]
+scalingFactorForControlCustomers <- preTrialMeasures[STORE_NBR == trial_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)] / 
+                                    preTrialMeasures[STORE_NBR == control_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)]
 
 # 2. Apply the scaling factor and create the 'scaledControlCustomers' object
-
-measureOverTimeCusts \<- measureOverTime \# Use the full measureOverTime table scaledControlCustomers \<- measureOverTimeCusts[STORE_NBR == control_store, .(STORE_NBR, YEARMONTH, controlCustomers = nCustomers \* scalingFactorForControlCustomers)]
+measureOverTimeCusts <- measureOverTime # Use the full measureOverTime table
+scaledControlCustomers <- measureOverTimeCusts[STORE_NBR == control_store, 
+                                               .(STORE_NBR, YEARMONTH, 
+                                                 controlCustomers = nCustomers * scalingFactorForControlCustomers)]
 
 # Rename nCustomers to controlCustomers in the object for consistency in the merge
-
 # NOTE: The line above already does the renaming, so we are good to go.
 
 # 3. Calculate percentage difference (your existing code, slightly corrected for the new column name 'controlCustomers')
-
-percentageDiff \<- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")], by = "YEARMONTH" )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]\#### Scale pre-trial control customers to match pre-trial trial store customers
+percentageDiff <- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], 
+                        measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")],
+                        by = "YEARMONTH"
+                        )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]#### Scale pre-trial control customers to match pre-trial trial store customers
 
 # 1. Calculate the scaling factor for customers
-
-scalingFactorForControlCustomers \<- preTrialMeasures[STORE_NBR == trial_store & YEARMONTH \< 201902, sum(nCustomers)] / preTrialMeasures[STORE_NBR == control_store & YEARMONTH \< 201902, sum(nCustomers)]
+scalingFactorForControlCustomers <- preTrialMeasures[STORE_NBR == trial_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)] / 
+                                    preTrialMeasures[STORE_NBR == control_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)]
 
 # 2. Apply the scaling factor and create the 'scaledControlCustomers' object
-
-measureOverTimeCusts \<- measureOverTime \# Use the full measureOverTime table scaledControlCustomers \<- measureOverTimeCusts[STORE_NBR == control_store, .(STORE_NBR, YEARMONTH, controlCustomers = nCustomers \* scalingFactorForControlCustomers)]
+measureOverTimeCusts <- measureOverTime # Use the full measureOverTime table
+scaledControlCustomers <- measureOverTimeCusts[STORE_NBR == control_store, 
+                                               .(STORE_NBR, YEARMONTH, 
+                                                 controlCustomers = nCustomers * scalingFactorForControlCustomers)]
 
 # Rename nCustomers to controlCustomers in the object for consistency in the merge
-
 # NOTE: The line above already does the renaming, so we are good to go.
 
 # 3. Calculate percentage difference (your existing code, slightly corrected for the new column name 'controlCustomers')
-
-percentageDiff \<- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")], by = "YEARMONTH" )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]\#### Scale pre-trial control customers to match pre-trial trial store customers
+percentageDiff <- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], 
+                        measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")],
+                        by = "YEARMONTH"
+                        )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]#### Scale pre-trial control customers to match pre-trial trial store customers
 
 # 1. Calculate the scaling factor for customers
-
-scalingFactorForControlCustomers \<- preTrialMeasures[STORE_NBR == trial_store & YEARMONTH \< 201902, sum(nCustomers)] / preTrialMeasures[STORE_NBR == control_store & YEARMONTH \< 201902, sum(nCustomers)]
+scalingFactorForControlCustomers <- preTrialMeasures[STORE_NBR == trial_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)] / 
+                                    preTrialMeasures[STORE_NBR == control_store & 
+                                                       YEARMONTH < 201902, sum(nCustomers)]
 
 # 2. Apply the scaling factor and create the 'scaledControlCustomers' object
-
-measureOverTimeCusts \<- measureOverTime \# Use the full measureOverTime table scaledControlCustomers \<- measureOverTimeCusts[STORE_NBR == control_store, .(STORE_NBR, YEARMONTH, controlCustomers = nCustomers \* scalingFactorForControlCustomers)]
+measureOverTimeCusts <- measureOverTime # Use the full measureOverTime table
+scaledControlCustomers <- measureOverTimeCusts[STORE_NBR == control_store, 
+                                               .(STORE_NBR, YEARMONTH, 
+                                                 controlCustomers = nCustomers * scalingFactorForControlCustomers)]
 
 # Rename nCustomers to controlCustomers in the object for consistency in the merge
-
 # NOTE: The line above already does the renaming, so we are good to go.
 
 # 3. Calculate percentage difference (your existing code, slightly corrected for the new column name 'controlCustomers')
-
-percentageDiff \<- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")], by = "YEARMONTH" )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]
-
+percentageDiff <- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomers")], 
+                        measureOverTime[STORE_NBR == trial_store, c("nCustomers", "YEARMONTH")],
+                        by = "YEARMONTH"
+                        )[, percentageDiff := abs(controlCustomers - nCustomers) / controlCustomers]
 ```{r}
 # Filter out the trial store itself (Store1 is the trial store, Store2 is the control store)
 control_store_77 <- score_Control[Store2 != trial_store, ]
@@ -381,8 +419,8 @@ percentageDiff <- merge(scaledControlCustomers[, c("YEARMONTH", "controlCustomer
 #### As our null hypothesis is that the trial period is the same as the pre-trial
 #### period, let's take the standard deviation based on the scaled percentage difference
 #### in the pre-trial period
-stdDev <- sd(percentageDiff[YEARMONTH < 201902 , percentageDiff])
-degreesOfFreedom <- 7 # Re-define degrees of freedom (8 months pre-trial - 1)
+stdDev <- sd(percentageDiff[YEARMONTH < 201903 , percentageDiff])
+degreesOfFreedom <- 8 # Re-define degrees of freedom (8 months pre-trial - 1)
 ```
 
 ```{r}
